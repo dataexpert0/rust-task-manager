@@ -7,6 +7,7 @@ use windows::{
 
 use std::ffi::OsString;
 use std::os::windows::ffi::OsStringExt;
+use std::mem;
 
 #[derive(Debug)]
 pub struct ProcessInfo {
@@ -85,17 +86,51 @@ fn get_process_name(process_handle: HANDLE) -> String {
     }
 }
 
+fn working_set_size(pid: u32) -> String{
+    unsafe 
+    {
+        let process_handle = OpenProcess(
+            PROCESS_QUERY_INFORMATION | PROCESS_VM_READ,
+            FALSE,
+            pid,
+        );
+
+        match process_handle {
+            Ok(handle) => {
+            let mut pmc: PROCESS_MEMORY_COUNTERS = mem::zeroed();
+            pmc.cb = mem::size_of::<PROCESS_MEMORY_COUNTERS>() as u32;
+
+            let ok = K32GetProcessMemoryInfo(handle, &mut pmc, pmc.cb as u32);
+
+            let _ = CloseHandle(handle);
+
+            if ok.as_bool() {
+                let kb = pmc.WorkingSetSize / 1024;
+                return format!("{} KB", kb);
+            } else {
+                return "[Falha ao obter uso de memória]".to_string();
+            }
+            }
+            Err(_) => {
+            return "[Sem permissao.]".to_string();
+            }
+        }
+    }
+}
+
 fn main() {
     println!("Task Manager by dataexpert01");
 
     match get_process_list() {
         Ok(processes) => {
             println!("Processos encontrados: {}", processes.len());
-            println!("{:<10} | {:<50}", "PID", "Nome do Processo");
-            println!("{:-<10} | {:-<50}", "", "");
+            println!("{:<10} | {:<50} | {:>15}", "PID", "Nome do Processo", "Memória");
+            println!("{:-<10} | {:-<50} | {:-<15}", "", "", "");
 
             for p in processes {
-                println!("{:<10} | {:<50}", p.pid, p.name);
+                let memory = working_set_size(p.pid);
+
+                println!("{:<10} | {:<50} | {:>15}", p.pid, p.name, memory);
             }
         }
         Err(e) => {
