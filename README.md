@@ -54,7 +54,7 @@ A arquitetura central (ramo `main`) é um aplicativo de Interface de Linha de Co
 ### Compilação
 ```bash
 # 1. Clone o repositório
-git clone [(https://github.com/dataexpert0/rust-task-manager.git)]
+git clone https://github.com/dataexpert0/rust-task-manager.git
 cd rust-task-manager.git
 
 # 2. Compile em modo de release (otimizado)
