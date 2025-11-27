@@ -2,7 +2,6 @@
 
 **Autor:** [dataexpert0]
 **Data:** [06/11/2025]
-**Versão:** 0.1.0
 
 ---
 
