@@ -5,9 +5,11 @@ use windows::{
     Win32::System::Threading::*,
 };
 
-use std::ffi::OsString;
+use std::{ffi::OsString, net};
 use std::os::windows::ffi::OsStringExt;
 use std::mem;
+use windows::Win32::System::Threading::{TerminateProcess, PROCESS_TERMINATE};
+use std::io::{self, Write};
 
 #[derive(Debug)]
 pub struct ProcessInfo {
@@ -118,7 +120,29 @@ fn working_set_size(pid: u32) -> String{
     }
 }
 
+fn kill_process(pid: u32) -> bool 
+{
+    unsafe
+    {
+        let process_handle = OpenProcess(
+            PROCESS_TERMINATE,
+            FALSE,
+            pid,
+        );
+
+        if let Ok(handle) = process_handle
+        {
+            let success = TerminateProcess(handle, 1);
+            let _ = CloseHandle(handle);
+
+            return success.is_ok();
+        }
+        false
+    }
+}
+
 fn main() {
+
     println!("Task Manager by dataexpert01");
 
     match get_process_list() {
@@ -135,6 +159,38 @@ fn main() {
         }
         Err(e) => {
             println!("Erro: {}", e);
+        }
+    }
+
+    loop {
+        print!("\n Digite o PID para finalizar o processo, ou só digite sair. \n");
+        io::stdout().flush().unwrap();
+
+        let mut input = String::new();
+        io::stdin().read_line(&mut input).expect("Falha na leitura.");
+
+        let comando = input.trim();
+
+        if comando == "sair"
+        {
+            break;
+        }
+
+        match comando.parse::<u32>()
+        {
+            Ok(pid) => {
+                println!("Tentando finalizar o PID de número {}", pid);
+
+                if kill_process(pid)
+                {
+                    println!("Processo {} finalizado!", pid);
+                }
+                else
+                {
+                    println!("Falha: Acesso negado ou PID não existe.");
+                }
+            },
+            Err(_) => println!("Isso não é um número válido! ⚠️"),
         }
     }
 }
