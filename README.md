@@ -18,6 +18,14 @@ A linguagem Rust apresenta um paradigma de "segurança de memória sem coletor d
 * **Performática:** Comparável a ferramentas nativas, sem a sobrecarga de um *runtime*.
 * **Moderna:** Utilizando as melhores práticas de desenvolvimento de software.
 
+## 🛠️ Tecnologias Utilizadas
+
+- **Linguagem:** [Rust](https://www.rust-lang.org/)
+- **GUI:** [Egui](https://github.com/emilk/egui) com `eframe`
+- **Sistema:** [Windows Crate](https://crates.io/crates/windows) (Win32 API)
+    - `Win32::System::Threading`
+    - `Win32::System::ProcessStatus`
+
 ## 3. Arquitetura e Metodologia
 
 O projeto é construído em torno da crate `windows-rs`, mantida pela Microsoft, que fornece *bindings* Rust idiomáticos para a API do Windows.
