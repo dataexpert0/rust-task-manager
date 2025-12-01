@@ -42,7 +42,7 @@ A arquitetura central (ramo `main`) é um aplicativo de Interface de Linha de Co
 * [X] Listagem de todos os processos em execução (PID e Nome).
 * [X] Obtenção de uso de memória (Working Set Size).
 * [X] Capacidade de finalizar (kill) processos por PID.
-* [ ] Interface Gráfica (GUI) para interação do usuário.
+* [X] Interface Gráfica (GUI) para interação do usuário.
 
 ## 5. Instruções de Compilação e Uso
 
